@@ -95,7 +95,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -149,6 +149,7 @@
     <ClInclude Include="include\GL\glew.h" />
     <ClInclude Include="include\GL\glxew.h" />
     <ClInclude Include="include\GL\wglew.h" />
+    <ClInclude Include="include\SOIL\SOIL.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -166,12 +167,25 @@
   <ItemGroup>
     <Library Include="libs\glew32s.lib" />
     <Library Include="libs\glfw3.lib" />
+    <Library Include="libs\SOIL.lib" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="basicshader.frag" />
-    <None Include="vbasicshader.vs" />
+    <None Include="Shaders\fragshader.frag" />
+    <None Include="Shaders\vertexshader.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <Target Name="CopyShaders" AfterTargets="Build">
+    <ItemGroup>
+      <ShaderFiles Include="Shaders/*" />
+    </ItemGroup>
+    <Copy DestinationFolder="Debug/Shaders/" SkipUnchangedFiles="True" SourceFiles="@(ShaderFiles)" UseHardlinksIfPossible="True" />
+  </Target>
+  <Target Name="CopyTextures" AfterTargets="Build">
+    <ItemGroup>
+      <TextureFiles Include="Textures/*" />
+    </ItemGroup>
+    <Copy DestinationFolder="Debug/Textures/" SkipUnchangedFiles="True" SourceFiles="@(TextureFiles)" UseHardlinksIfPossible="True" />
+  </Target>
 </Project>

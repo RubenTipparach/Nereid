@@ -16,6 +16,9 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{d6dcc913-5acd-4ce6-8fe9-9263cc6ab571}</UniqueIdentifier>
     </Filter>
+    <Filter Include="libs">
+      <UniqueIdentifier>{3a488776-3643-49f4-83f2-a3322370fd94}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -48,6 +51,9 @@
     <ClInclude Include="Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\SOIL\SOIL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -61,15 +67,18 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="libs\glfw3.lib" />
-    <Library Include="libs\glew32s.lib" />
+    <Library Include="libs\glfw3.lib">
+      <Filter>libs</Filter>
+    </Library>
+    <Library Include="libs\glew32s.lib">
+      <Filter>libs</Filter>
+    </Library>
+    <Library Include="libs\SOIL.lib">
+      <Filter>libs</Filter>
+    </Library>
   </ItemGroup>
   <ItemGroup>
-    <None Include="basicshader.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="vbasicshader.vs">
-      <Filter>Shaders</Filter>
-    </None>
+    <None Include="Shaders\fragshader.frag" />
+    <None Include="Shaders\vertexshader.vs" />
   </ItemGroup>
 </Project>
