@@ -78,7 +78,11 @@
     </Library>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\fragshader.frag" />
-    <None Include="Shaders\vertexshader.vs" />
+    <None Include="Shaders\fragshader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\vertexshader.vs">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

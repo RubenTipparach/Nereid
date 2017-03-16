@@ -8,6 +8,10 @@
 #include <GLFW/glfw3.h>
 #include <SOIL/SOIL.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include "Shader.h"
 
 
@@ -20,8 +24,26 @@ const GLuint WIDTH = 800, HEIGHT = 600;
 
 // TODO: add these to shading scripts to load them at run time.
 
+void math_test(Shader* ourShader, float time)
+{
+	glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
+	glm::mat4 trans;
+	//trans = glm::translate(trans, glm::vec3(3.0f, 1.0f, 0.0f));
+	//vec = trans * vec;
+
+	trans = glm::rotate(trans, 0.1f * time, glm::vec3(0.0, 1.0, 1.0));
+	//trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+	//vec = trans * vec;
+
+	GLuint transformLoc = glGetUniformLocation(ourShader->Program, "transform");
+	glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+
+	//std::cout << vec.x << "," << vec.y << "," << vec.z << std::endl;
+}
+
 int main()
 {
+
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -129,6 +151,9 @@ int main()
 	SOIL_free_image_data(image);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
+
+
+
 	// render loop!
 	while (!glfwWindowShouldClose(window))
 	{
@@ -151,6 +176,10 @@ int main()
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
 		glUniform1i(glGetUniformLocation(ourShader.Program, "ourTexture2"), 1);
+
+		//use that translation stuff
+		math_test(&ourShader, glfwGetTime());
+
 
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
