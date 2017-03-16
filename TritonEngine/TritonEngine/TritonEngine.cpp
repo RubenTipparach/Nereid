@@ -26,19 +26,26 @@ const GLuint WIDTH = 800, HEIGHT = 600;
 
 void math_test(Shader* ourShader, float time)
 {
-	glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
+	glm::vec4 vec(0.0f, 0.0f, 0.0f, 1.0f);
 	glm::mat4 trans;
 	//trans = glm::translate(trans, glm::vec3(3.0f, 1.0f, 0.0f));
 	//vec = trans * vec;
 
-	trans = glm::rotate(trans, 0.1f * time, glm::vec3(0.0, 1.0, 1.0));
-	//trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+	//trans = glm::translate(trans, glm::vec3(0.0f, time* -0.1f, 0.0f));
+	//trans = glm::rotate(trans, 0.1f * time, glm::vec3(0.0, 1.0, 1.0));
+
+	//it uses radians now!! Also: L = T * R * S
+	trans = glm::translate(trans, glm::vec3(0.0f, time* -0.1f, 0.0f));
+	vec = trans * vec;
+		
+	trans = glm::rotate(trans, glm::radians(1.0f)* time, glm::vec3(0.0, 0.0, 1.0)); 
+	trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
 	//vec = trans * vec;
 
 	GLuint transformLoc = glGetUniformLocation(ourShader->Program, "transform");
 	glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
-	//std::cout << vec.x << "," << vec.y << "," << vec.z << std::endl;
+	std::cout << vec.x << "," << vec.y << "," << vec.z << std::endl;
 }
 
 int main()
