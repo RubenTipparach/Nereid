@@ -76,6 +76,10 @@ void Camera::ProcessMouseScroll(GLfloat yoffset)
 		this->Zoom = 45.0f;
 }
 
+Camera::~Camera()
+{
+}
+
 glm::mat4 Camera::GetViewMatrix()
 {
 	return glm::lookAt(this->Position, this->Position + this->Front, this->Up);
