@@ -1,4 +1,4 @@
-// TritonEngine.cpp : Defines the entry point for the console application.
+﻿// TritonEngine.cpp : Defines the entry point for the console application.
 // https://learnopengl.com/
 #include <iostream>
 #include "stdafx.h"
@@ -12,17 +12,22 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Global.h"
+#include "Camera.h"
 #include "Shader.h"
-
 
 // Function prototypes
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+void Do_Movement();
 
-// Window dimensions
-const GLuint WIDTH = 800, HEIGHT = 600;
-// Shaders
+// Shaders TODO: add these to shading scripts to load them at run time.
 
-// TODO: add these to shading scripts to load them at run time.
+GLfloat lastX = 400, lastY = 300;
+bool firstMouse = true;
+
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 /// ModelLoc -> model location pointer
 void math_test(Shader* ourShader, float time, GLint* modelLoc)
@@ -51,11 +56,23 @@ void math_test(Shader* ourShader, float time, GLint* modelLoc)
 	model = glm::rotate(model, time*glm::radians(-55.00f), glm::vec3(1.0f, 1.0f, 0.0f));
 
 	// Note that we're translating the scene in the reverse direction of where we want to move
+	/*glm::mat4 view;
+	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));*/
+	//GLfloat radius = 10.0f;
+	//GLfloat camX = sin(time) * radius;
+	//GLfloat camZ = cos(time) * radius;
+
+	//direction.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
+	//direction.y = sin(glm::radians(pitch));
+	//direction.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+
 	glm::mat4 view;
-	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+	//view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));//changing the view matrix moves the camera.
+	view = camera.GetViewMatrix();
+
 
 	glm::mat4 projection;
-	projection = glm::perspective(45.0f, (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
+	projection = glm::perspective(camera.Zoom, (float)WIDTH / (float)HEIGHT, 0.1f, 1000.0f);
 
 	*modelLoc = glGetUniformLocation(ourShader->Program, "model");
 	glUniformMatrix4fv(*modelLoc, 1, GL_FALSE, glm::value_ptr(model));
@@ -70,7 +87,7 @@ void math_test(Shader* ourShader, float time, GLint* modelLoc)
 
 int main()
 {
-
+	
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -81,8 +98,12 @@ int main()
 	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Triton Engine", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
+
 	// Set the required callback functions
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetKeyCallback(window, key_callback);
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetScrollCallback(window, scroll_callback);
 
 	// Set this to true so GLEW knows to use a modern approach to retrieving function pointers and extensions
 	glewExperimental = GL_TRUE;
@@ -94,10 +115,12 @@ int main()
 	glViewport(0, 0, WIDTH, HEIGHT);
 
 	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_CULL_FACE);
+	//glFrontFace(GL_CCW);
+	//glCullFace(GL_FRONT);
 
 	// Build and compile our shader program
 	Shader ourShader("Shaders/vertexshader.vs", "Shaders/fragshader.frag");
-
 
 	// Set up vertex data (and buffer(s)) and attribute pointers
 	//GLfloat vertices[] = {
@@ -237,9 +260,14 @@ int main()
 	// render loop!
 	while (!glfwWindowShouldClose(window))
 	{
+		//always calculate this first
+		GLfloat currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
 
 		// check events
 		glfwPollEvents();
+		Do_Movement();
 
 		// rendering commands
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -266,6 +294,7 @@ int main()
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // <--- only use with EBO
 		//glDrawArrays(GL_TRIANGLES, 0, 36);
 
+		// Drawing and rotating those boxes.
 		for (GLuint i = 0; i < 10; i++)
 		{
 			glm::mat4 model;
@@ -299,4 +328,49 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	{
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
+
+	if (key >= 0 && key < 1024)
+	{
+		if (action == GLFW_PRESS)
+			keys[key] = true;
+		else if (action == GLFW_RELEASE)
+			keys[key] = false;
+	}
+
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	camera.ProcessMouseScroll(yoffset);
+}
+
+void mouse_callback(GLFWwindow * window, double xpos, double ypos)
+{
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+	
+	GLfloat xoffset = xpos - lastX;
+	GLfloat yoffset = lastY - ypos;  // Reversed since y-coordinates go from bottom to left
+
+	lastX = xpos;
+	lastY = ypos;
+
+	camera.ProcessMouseMovement(xoffset, yoffset);
+}
+
+void Do_Movement()
+{
+	// Camera controls
+	if (keys[GLFW_KEY_W])
+		camera.ProcessKeyboard(FORWARD, deltaTime);
+	if (keys[GLFW_KEY_S])
+		camera.ProcessKeyboard(BACKWARD, deltaTime);
+	if (keys[GLFW_KEY_A])
+		camera.ProcessKeyboard(LEFT, deltaTime);
+	if (keys[GLFW_KEY_D])
+		camera.ProcessKeyboard(RIGHT, deltaTime);
 }
