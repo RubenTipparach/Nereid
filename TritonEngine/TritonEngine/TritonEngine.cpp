@@ -24,7 +24,8 @@ const GLuint WIDTH = 800, HEIGHT = 600;
 
 // TODO: add these to shading scripts to load them at run time.
 
-void math_test(Shader* ourShader, float time)
+/// ModelLoc -> model location pointer
+void math_test(Shader* ourShader, float time, GLint* modelLoc)
 {
 	glm::vec4 vec(0.0f, 0.0f, 0.0f, 1.0f);
 	glm::mat4 trans;
@@ -35,17 +36,36 @@ void math_test(Shader* ourShader, float time)
 	//trans = glm::rotate(trans, 0.1f * time, glm::vec3(0.0, 1.0, 1.0));
 
 	//it uses radians now!! Also: L = T * R * S
-	trans = glm::translate(trans, glm::vec3(0.0f, time* -0.1f, 0.0f));
-	vec = trans * vec;
+	//trans = glm::translate(trans, glm::vec3(0.0f, time* -0.1f, 0.0f));
+	//vec = trans * vec;
 		
-	trans = glm::rotate(trans, glm::radians(1.0f)* time, glm::vec3(0.0, 0.0, 1.0)); 
-	trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+	//trans = glm::rotate(trans, glm::radians(10.0f)* time, glm::vec3(1.0, 1.0, 0.0)); 
+	//trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
 	//vec = trans * vec;
 
-	GLuint transformLoc = glGetUniformLocation(ourShader->Program, "transform");
-	glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+	//GLuint transformLoc = glGetUniformLocation(ourShader->Program, "transform");
+	//glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-	std::cout << vec.x << "," << vec.y << "," << vec.z << std::endl;
+	//experimenting with perspective
+	glm::mat4 model;
+	model = glm::rotate(model, time*glm::radians(-55.00f), glm::vec3(1.0f, 1.0f, 0.0f));
+
+	// Note that we're translating the scene in the reverse direction of where we want to move
+	glm::mat4 view;
+	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+
+	glm::mat4 projection;
+	projection = glm::perspective(45.0f, (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
+
+	*modelLoc = glGetUniformLocation(ourShader->Program, "model");
+	glUniformMatrix4fv(*modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+	GLint viewSpace = glGetUniformLocation(ourShader->Program, "view");
+	glUniformMatrix4fv(viewSpace, 1, GL_FALSE, glm::value_ptr(view));
+
+	GLint projSpace = glGetUniformLocation(ourShader->Program, "projection");
+	glUniformMatrix4fv(projSpace, 1, GL_FALSE, glm::value_ptr(projection));
+	//std::cout << vec.x << "," << vec.y << "," << vec.z << std::endl;
 }
 
 int main()
@@ -73,49 +93,101 @@ int main()
 	// Define the viewport dimensions
 	glViewport(0, 0, WIDTH, HEIGHT);
 
+	glEnable(GL_DEPTH_TEST);
+
 	// Build and compile our shader program
 	Shader ourShader("Shaders/vertexshader.vs", "Shaders/fragshader.frag");
 
 
 	// Set up vertex data (and buffer(s)) and attribute pointers
+	//GLfloat vertices[] = {
+	//	// Positions          // Colors           // Texture Coords
+	//	0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // Top Right
+	//	0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // Bottom Right
+	//	-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // Bottom Left
+	//	-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // Top Left 
+	//};
+
 	GLfloat vertices[] = {
-		// Positions          // Colors           // Texture Coords
-		0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // Top Right
-		0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // Bottom Right
-		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // Bottom Left
-		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // Top Left 
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+		0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
 
-	GLuint indices[] = {  // Note that we start from 0!
-		0, 1, 3, // First Triangle
-		1, 2, 3  // Second Triangle
+	glm::vec3 cubePositions[] = {
+		glm::vec3(0.0f,  0.0f,  0.0f),
+		glm::vec3(2.0f,  5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f,  3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f,  2.0f, -2.5f),
+		glm::vec3(1.5f,  0.2f, -1.5f),
+		glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 
-	GLuint VBO, VAO, EBO;
+	//GLuint indices[] = {  // Note that we start from 0!
+	//	0, 1, 3, // First Triangle
+	//	1, 2, 3  // Second Triangle
+	//};
+
+	GLuint VBO, VAO;
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
 
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-
 	// Position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
-	// Color attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(1);
-
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
+	// TexCoord attribute
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(2);
 
 	glBindVertexArray(0); // Unbind VAO
+
 	// Uncommenting this call will result in wireframe polygons.
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -159,17 +231,19 @@ int main()
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 
-
+	//glm::mat4 proj = glm::perspective(45.0f, (float)width / (float)height, 0.1f, 100.0f);
+	//glm::ortho(0.0f, 1200.0f, 0.0f, 600.0f, 0.1f, 100.0f);
 
 	// render loop!
 	while (!glfwWindowShouldClose(window))
 	{
+
 		// check events
 		glfwPollEvents();
 
 		// rendering commands
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		ourShader.Use();
 
@@ -185,11 +259,24 @@ int main()
 		glUniform1i(glGetUniformLocation(ourShader.Program, "ourTexture2"), 1);
 
 		//use that translation stuff
-		math_test(&ourShader, glfwGetTime());
-
+		GLint modelLoc;
+		math_test(&ourShader, glfwGetTime(), &modelLoc);
 
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // <--- only use with EBO
+		//glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		for (GLuint i = 0; i < 10; i++)
+		{
+			glm::mat4 model;
+			model = glm::translate(model, cubePositions[i]);
+			GLfloat angle = glm::radians(20.0f) * (i+1) * glfwGetTime();
+			model = glm::rotate(model, angle, glm::vec3(1.0f, 0.3f, 0.5f));
+			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
+
 		glBindVertexArray(0);
 
 		// swap buffers
@@ -199,7 +286,7 @@ int main()
 	// Properly de-allocate all resources once they've outlived their purpose
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
-	glDeleteBuffers(1, &EBO);
+	//glDeleteBuffers(1, &EBO);
 
 	glfwTerminate();
 	return 0;
