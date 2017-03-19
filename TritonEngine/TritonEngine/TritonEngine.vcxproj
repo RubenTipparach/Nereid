@@ -144,6 +144,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Cube.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="include\GLFW\glfw3.h" />
@@ -163,6 +164,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Cube.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="MeshData.cpp" />
     <ClCompile Include="Model.cpp" />
@@ -183,7 +185,11 @@
     <Library Include="libs\SOIL.lib" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\color_frag.frag" />
+    <None Include="Shaders\color_vertex.vs" />
     <None Include="Shaders\fragshader.frag" />
+    <None Include="Shaders\lit_object.frag" />
+    <None Include="Shaders\posonly_vertex.vs" />
     <None Include="Shaders\vertexshader.vs" />
   </ItemGroup>
   <ItemGroup>

@@ -85,6 +85,24 @@ void math_test(Shader* ourShader, float time, GLint* modelLoc)
 	//std::cout << vec.x << "," << vec.y << "," << vec.z << std::endl;
 }
 
+void drawAtLocation(Shader* ourShader, float time, glm::mat4 model)
+{
+	glm::mat4 view;
+	view = camera.GetViewMatrix();
+
+	glm::mat4 projection;
+	projection = glm::perspective(camera.Zoom, (float)WIDTH / (float)HEIGHT, 0.1f, 1000.0f);
+
+	GLint modelLoc = glGetUniformLocation(ourShader->Program, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+	GLint viewSpace = glGetUniformLocation(ourShader->Program, "view");
+	glUniformMatrix4fv(viewSpace, 1, GL_FALSE, glm::value_ptr(view));
+
+	GLint projSpace = glGetUniformLocation(ourShader->Program, "projection");
+	glUniformMatrix4fv(projSpace, 1, GL_FALSE, glm::value_ptr(projection));
+}
+
 int main()
 {
 	
@@ -122,58 +140,52 @@ int main()
 	// Build and compile our shader program
 	Shader ourShader("Shaders/vertexshader.vs", "Shaders/fragshader.frag");
 
+
 	// Set up vertex data (and buffer(s)) and attribute pointers
-	//GLfloat vertices[] = {
-	//	// Positions          // Colors           // Texture Coords
-	//	0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // Top Right
-	//	0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // Bottom Right
-	//	-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // Bottom Left
-	//	-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // Top Left 
-	//};
-
 	GLfloat vertices[] = {
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-		0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f,
+		0.5f,  0.5f, -0.5f,
+		0.5f,  0.5f, -0.5f,
+		-0.5f,  0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
 
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,
+		0.5f, -0.5f,  0.5f,
+		0.5f,  0.5f,  0.5f,
+		0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+		-0.5f, -0.5f,  0.5f,
 
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
 
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,
+		0.5f,  0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f,  0.5f,
+		0.5f,  0.5f,  0.5f,
 
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f,  0.5f,
+		0.5f, -0.5f,  0.5f,
+		-0.5f, -0.5f,  0.5f,
+		-0.5f, -0.5f, -0.5f,
 
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+		-0.5f,  0.5f, -0.5f,
+		0.5f,  0.5f, -0.5f,
+		0.5f,  0.5f,  0.5f,
+		0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f, -0.5f
 	};
+
 
 	glm::vec3 cubePositions[] = {
 		glm::vec3(0.0f,  0.0f,  0.0f),
@@ -197,19 +209,41 @@ int main()
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 
-	glBindVertexArray(VAO);
-
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBindVertexArray(VAO);
 
 	// Position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 	// TexCoord attribute
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(2);
+	//glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	//glEnableVertexAttribArray(2);
 
 	glBindVertexArray(0); // Unbind VAO
+
+	//################### Begin Light Shader stuff ###############################//
+
+	Shader litObjectShader("Shaders/posonly_vertex.vs", "Shaders/lit_object.frag");
+	Shader lampShader("Shaders/posonly_vertex.vs", "Shaders/color_frag.frag");
+	GLuint lightVAO;
+	glGenVertexArrays(1, &lightVAO);
+	glBindVertexArray(lightVAO);
+	// We only need to bind to the VBO, the container's VBO's data already contains the correct data.
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	// Set the vertex attributes (only position data for our lamp)
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+	glBindVertexArray(0);
+
+	// Don't forget to 'use' the corresponding shader program first (to set the uniform)
+	GLint objectColorLoc = glGetUniformLocation(litObjectShader.Program, "objectColor");
+	GLint lightColorLoc = glGetUniformLocation(litObjectShader.Program, "lightColor");
+	glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
+	glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f); // Also set light's color (white)
+
+
+	//################### End Light Shader stuff    ###############################//
 
 	// Uncommenting this call will result in wireframe polygons.
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -230,6 +264,9 @@ int main()
 	// render loop!
 	while (!glfwWindowShouldClose(window))
 	{
+		glm::vec3 lightPos(1.2f, 1.0f * glfwGetTime(), 2.0f);
+
+
 		//always calculate this first
 		GLfloat currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
@@ -257,24 +294,53 @@ int main()
 		glUniform1i(glGetUniformLocation(ourShader.Program, "ourTexture2"), 1);
 
 		//use that translation stuff
-		GLint modelLoc;
-		math_test(&ourShader, glfwGetTime(), &modelLoc);
+		//GLint modelLoc;
+		//math_test(&ourShader, glfwGetTime(), &modelLoc);
 
-		glBindVertexArray(VAO);
+		//glBindVertexArray(VAO);
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // <--- only use with EBO
 		//glDrawArrays(GL_TRIANGLES, 0, 36);
 
-		// Drawing and rotating those boxes.
-		for (GLuint i = 0; i < 10; i++)
-		{
-			glm::mat4 model;
-			model = glm::translate(model, cubePositions[i]);
-			GLfloat angle = glm::radians(20.0f) * (i+1) * glfwGetTime();
-			model = glm::rotate(model, angle, glm::vec3(1.0f, 0.3f, 0.5f));
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		// lighting stuff...
+		litObjectShader.Use();
+		GLint objectColorLoc = glGetUniformLocation(litObjectShader.Program, "objectColor");
+		GLint lightColorLoc = glGetUniformLocation(litObjectShader.Program, "lightColor");
+		glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
+		glUniform3f(lightColorLoc, 1.0f, 0.5f, 1.0f);
 
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
+		glm::mat4 model;
+		model = glm::mat4();
+
+
+		glBindVertexArray(VAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
+		drawAtLocation(&litObjectShader, glfwGetTime(),  model);
+
+
+		lampShader.Use();
+
+		
+		model = glm::mat4();
+		model = glm::translate(model, lightPos);
+		model = glm::scale(model, glm::vec3(0.2f));
+
+		drawAtLocation(&lampShader, glfwGetTime(), model);
+
+		glBindVertexArray(lightVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
+		// Drawing and rotating those boxes.
+		//for (GLuint i = 0; i < 10; i++)
+		//{
+		//	glm::mat4 model;
+		//	model = glm::translate(model, cubePositions[i]);
+		//	GLfloat angle = glm::radians(20.0f) * (i+1) * glfwGetTime();
+		//	model = glm::rotate(model, angle, glm::vec3(1.0f, 0.3f, 0.5f));
+		//	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+		//	glDrawArrays(GL_TRIANGLES, 0, 36);
+		//}
 
 		glBindVertexArray(0);
 

@@ -19,6 +19,18 @@
     <Filter Include="libs">
       <UniqueIdentifier>{3a488776-3643-49f4-83f2-a3322370fd94}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Mesh">
+      <UniqueIdentifier>{8662320b-f808-47cc-b942-c5a50783e26c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Texture">
+      <UniqueIdentifier>{867c264a-166e-4531-80de-cbe5ce49df01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Shader">
+      <UniqueIdentifier>{85ed65a0-30fe-4b5d-b126-19a3130b2c9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mesh\Primitive">
+      <UniqueIdentifier>{dfdf7a6c-9ea2-461d-a4df-b345c486ab2c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -75,24 +87,15 @@
     <ClInclude Include="Global.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Cube.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TritonEngine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GameObject.cpp">
@@ -102,6 +105,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Transform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshData.cpp">
+      <Filter>Source Files\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source Files\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Source Files\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Cube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -121,6 +139,18 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="Shaders\vertexshader.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\color_frag.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\color_vertex.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\lit_object.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\posonly_vertex.vs">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
