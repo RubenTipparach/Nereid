@@ -120,7 +120,7 @@
       <Filter>Source Files\Texture</Filter>
     </ClCompile>
     <ClCompile Include="Cube.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Mesh\Primitive</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -151,6 +151,9 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="Shaders\posonly_vertex.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\lit_object.vs">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

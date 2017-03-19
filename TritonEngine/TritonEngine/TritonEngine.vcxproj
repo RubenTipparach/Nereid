@@ -185,6 +185,7 @@
     <Library Include="libs\SOIL.lib" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\lit_object.vs" />
     <None Include="Shaders\color_frag.frag" />
     <None Include="Shaders\color_vertex.vs" />
     <None Include="Shaders\fragshader.frag" />

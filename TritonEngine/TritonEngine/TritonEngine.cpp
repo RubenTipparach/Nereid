@@ -15,6 +15,7 @@
 #include "Texture.h"
 #include "Camera.h"
 #include "Shader.h"
+#include "Cube.h"
 
 // Function prototypes
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
@@ -140,50 +141,49 @@ int main()
 	// Build and compile our shader program
 	Shader ourShader("Shaders/vertexshader.vs", "Shaders/fragshader.frag");
 
-
 	// Set up vertex data (and buffer(s)) and attribute pointers
 	GLfloat vertices[] = {
-		-0.5f, -0.5f, -0.5f,
-		0.5f, -0.5f, -0.5f,
-		0.5f,  0.5f, -0.5f,
-		0.5f,  0.5f, -0.5f,
-		-0.5f,  0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
-		-0.5f, -0.5f,  0.5f,
-		0.5f, -0.5f,  0.5f,
-		0.5f,  0.5f,  0.5f,
-		0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
-		-0.5f, -0.5f,  0.5f,
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+		0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+		0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+		0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
 
-		-0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
-		-0.5f, -0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-		0.5f,  0.5f,  0.5f,
-		0.5f,  0.5f, -0.5f,
-		0.5f, -0.5f, -0.5f,
-		0.5f, -0.5f, -0.5f,
-		0.5f, -0.5f,  0.5f,
-		0.5f,  0.5f,  0.5f,
+		0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+		0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+		0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+		0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+		0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+		0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
-		-0.5f, -0.5f, -0.5f,
-		0.5f, -0.5f, -0.5f,
-		0.5f, -0.5f,  0.5f,
-		0.5f, -0.5f,  0.5f,
-		-0.5f, -0.5f,  0.5f,
-		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+		0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+		0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+		0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
 
-		-0.5f,  0.5f, -0.5f,
-		0.5f,  0.5f, -0.5f,
-		0.5f,  0.5f,  0.5f,
-		0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f, -0.5f
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+		0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+		0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+		0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 	};
 
 
@@ -205,7 +205,10 @@ int main()
 	//	1, 2, 3  // Second Triangle
 	//};
 
-	GLuint VBO, VAO;
+	Shader litObjectShader("Shaders/lit_object.vs", "Shaders/lit_object.frag");
+	Shader lampShader("Shaders/posonly_vertex.vs", "Shaders/color_frag.frag");
+
+	GLuint VBO, VAO; //for lit object
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 
@@ -214,8 +217,13 @@ int main()
 	glBindVertexArray(VAO);
 
 	// Position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
+
+	// Normal attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
+
 	// TexCoord attribute
 	//glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
 	//glEnableVertexAttribArray(2);
@@ -224,13 +232,17 @@ int main()
 
 	//################### Begin Light Shader stuff ###############################//
 
-	Shader litObjectShader("Shaders/posonly_vertex.vs", "Shaders/lit_object.frag");
-	Shader lampShader("Shaders/posonly_vertex.vs", "Shaders/color_frag.frag");
-	GLuint lightVAO;
+	GLuint lightVBO, lightVAO; //for the light
 	glGenVertexArrays(1, &lightVAO);
-	glBindVertexArray(lightVAO);
+	glGenBuffers(1, &lightVBO);
+
 	// We only need to bind to the VBO, the container's VBO's data already contains the correct data.
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, lightVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesNoTexCoords), verticesNoTexCoords, GL_STATIC_DRAW);
+	glBindVertexArray(lightVAO);
+
+	//verticesNoTexCoords
+
 	// Set the vertex attributes (only position data for our lamp)
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
@@ -239,6 +251,11 @@ int main()
 	// Don't forget to 'use' the corresponding shader program first (to set the uniform)
 	GLint objectColorLoc = glGetUniformLocation(litObjectShader.Program, "objectColor");
 	GLint lightColorLoc = glGetUniformLocation(litObjectShader.Program, "lightColor");
+	GLint lightPosLoc = glGetUniformLocation(litObjectShader.Program, "lightPos");
+
+	//GLint ambient = glGetUniformLocation(litObjectShader.Program, "ambientStrength");
+	
+	//glUniform1f(ambient, 0.1f);
 	glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
 	glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f); // Also set light's color (white)
 
@@ -264,8 +281,7 @@ int main()
 	// render loop!
 	while (!glfwWindowShouldClose(window))
 	{
-		glm::vec3 lightPos(1.2f, 1.0f * glfwGetTime(), 2.0f);
-
+		glm::vec3 lightPos = camera.Position + camera.Front; //(1.2f, 0.1f * glfwGetTime(), 2.0f);
 
 		//always calculate this first
 		GLfloat currentFrame = glfwGetTime();
@@ -277,7 +293,7 @@ int main()
 		Do_Movement();
 
 		// rendering commands
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.01f, 0.01f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		ourShader.Use();
@@ -303,10 +319,10 @@ int main()
 
 		// lighting stuff...
 		litObjectShader.Use();
-		GLint objectColorLoc = glGetUniformLocation(litObjectShader.Program, "objectColor");
-		GLint lightColorLoc = glGetUniformLocation(litObjectShader.Program, "lightColor");
 		glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
-		glUniform3f(lightColorLoc, 1.0f, 0.5f, 1.0f);
+		glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f);
+		// modify the lighting data for the lit_object shader
+		glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
 
 		glm::mat4 model;
 		model = glm::mat4();
