@@ -187,18 +187,6 @@ int main()
 	};
 
 
-	glm::vec3 cubePositions[] = {
-		glm::vec3(0.0f,  0.0f,  0.0f),
-		glm::vec3(2.0f,  5.0f, -15.0f),
-		glm::vec3(-1.5f, -2.2f, -2.5f),
-		glm::vec3(-3.8f, -2.0f, -12.3f),
-		glm::vec3(2.4f, -0.4f, -3.5f),
-		glm::vec3(-1.7f,  3.0f, -7.5f),
-		glm::vec3(1.3f, -2.0f, -2.5f),
-		glm::vec3(1.5f,  2.0f, -2.5f),
-		glm::vec3(1.5f,  0.2f, -1.5f),
-		glm::vec3(-1.3f,  1.0f, -1.5f)
-	};
 
 	//GLuint indices[] = {  // Note that we start from 0!
 	//	0, 1, 3, // First Triangle
@@ -252,6 +240,7 @@ int main()
 	GLint objectColorLoc = glGetUniformLocation(litObjectShader.Program, "objectColor");
 	GLint lightColorLoc = glGetUniformLocation(litObjectShader.Program, "lightColor");
 	GLint lightPosLoc = glGetUniformLocation(litObjectShader.Program, "lightPos");
+	GLint viewPosLoc = glGetUniformLocation(litObjectShader.Program, "viewPos");
 
 	//GLint ambient = glGetUniformLocation(litObjectShader.Program, "ambientStrength");
 	
@@ -281,7 +270,7 @@ int main()
 	// render loop!
 	while (!glfwWindowShouldClose(window))
 	{
-		glm::vec3 lightPos = camera.Position + camera.Front; //(1.2f, 0.1f * glfwGetTime(), 2.0f);
+		glm::vec3 lightPos = glm::vec3(1.2f, 0.1f , 2.0f); //camera.Position + camera.Front; //(1.2f, 0.1f * glfwGetTime(), 2.0f);
 
 		//always calculate this first
 		GLfloat currentFrame = glfwGetTime();
@@ -321,11 +310,15 @@ int main()
 		litObjectShader.Use();
 		glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
 		glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f);
+		glUniform3f(viewPosLoc, camera.Position.x, camera.Position.y, camera.Position.z);
+
 		// modify the lighting data for the lit_object shader
 		glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
 
 		glm::mat4 model;
 		model = glm::mat4();
+		GLfloat angle = glm::radians(20.0f) * glfwGetTime();
+		model = glm::rotate(model, angle, glm::vec3(0.0, 1.0, 0.0));
 
 
 		glBindVertexArray(VAO);
@@ -340,6 +333,7 @@ int main()
 		model = glm::mat4();
 		model = glm::translate(model, lightPos);
 		model = glm::scale(model, glm::vec3(0.2f));
+		
 
 		drawAtLocation(&lampShader, glfwGetTime(), model);
 
