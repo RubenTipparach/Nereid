@@ -191,6 +191,7 @@
     <None Include="Shaders\fragshader.frag" />
     <None Include="Shaders\lit_object.frag" />
     <None Include="Shaders\posonly_vertex.vs" />
+    <None Include="Shaders\standard_mat_shader.frag" />
     <None Include="Shaders\vertexshader.vs" />
   </ItemGroup>
   <ItemGroup>

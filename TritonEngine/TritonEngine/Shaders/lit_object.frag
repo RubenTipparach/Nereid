@@ -1,5 +1,5 @@
 #version 330 core
-out vec4 color;
+
 
 //uniform float ambientStrength;  
 uniform vec3 objectColor;

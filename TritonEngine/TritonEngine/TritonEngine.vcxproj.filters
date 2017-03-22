@@ -156,6 +156,7 @@
     <None Include="Shaders\lit_object.vs">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="Shaders\standard_mat_shader.frag" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\awesomeface.png">

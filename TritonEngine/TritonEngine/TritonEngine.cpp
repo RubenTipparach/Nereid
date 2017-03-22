@@ -138,62 +138,13 @@ int main()
 	//glFrontFace(GL_CCW);
 	//glCullFace(GL_FRONT);
 
-	// Build and compile our shader program
-	Shader ourShader("Shaders/vertexshader.vs", "Shaders/fragshader.frag");
-
-	// Set up vertex data (and buffer(s)) and attribute pointers
-	GLfloat vertices[] = {
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-		0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-		0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-		0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-
-		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-		0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-		0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-		0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-
-		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-
-		0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-		0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-		0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-		0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-		0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-
-		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-		0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-		0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-		0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-
-		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-		0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-		0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-		0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
-	};
-
-
 
 	//GLuint indices[] = {  // Note that we start from 0!
 	//	0, 1, 3, // First Triangle
 	//	1, 2, 3  // Second Triangle
 	//};
 
-	Shader litObjectShader("Shaders/lit_object.vs", "Shaders/lit_object.frag");
+	Shader litObjectShader("Shaders/lit_object.vs", "Shaders/standard_mat_shader.frag");
 	Shader lampShader("Shaders/posonly_vertex.vs", "Shaders/color_frag.frag");
 
 	GLuint VBO, VAO; //for lit object
@@ -201,7 +152,7 @@ int main()
 	glGenBuffers(1, &VBO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesWithNormals), verticesWithNormals, GL_STATIC_DRAW);
 	glBindVertexArray(VAO);
 
 	// Position attribute
@@ -235,19 +186,6 @@ int main()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 	glBindVertexArray(0);
-
-	// Don't forget to 'use' the corresponding shader program first (to set the uniform)
-	GLint objectColorLoc = glGetUniformLocation(litObjectShader.Program, "objectColor");
-	GLint lightColorLoc = glGetUniformLocation(litObjectShader.Program, "lightColor");
-	GLint lightPosLoc = glGetUniformLocation(litObjectShader.Program, "lightPos");
-	GLint viewPosLoc = glGetUniformLocation(litObjectShader.Program, "viewPos");
-
-	//GLint ambient = glGetUniformLocation(litObjectShader.Program, "ambientStrength");
-	
-	//glUniform1f(ambient, 0.1f);
-	glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
-	glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f); // Also set light's color (white)
-
 
 	//################### End Light Shader stuff    ###############################//
 
@@ -284,19 +222,7 @@ int main()
 		// rendering commands
 		glClearColor(0.01f, 0.01f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
-		ourShader.Use();
-
-		//glUniform1f(glGetUniformLocation(ourShader.Program, "someUniform"), 1.0f);
-		//glBindTexture(GL_TEXTURE_2D, texture);
-
-		glActiveTexture(GL_TEXTURE0);	// Activate the texture unit first before binding texture
-		glBindTexture(GL_TEXTURE_2D, texture1);
-		glUniform1i(glGetUniformLocation(ourShader.Program, "ourTexture1"), 0);
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texture2);
-		glUniform1i(glGetUniformLocation(ourShader.Program, "ourTexture2"), 1);
+	
 
 		//use that translation stuff
 		//GLint modelLoc;
@@ -307,13 +233,27 @@ int main()
 		//glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		// lighting stuff...
+		// Use cooresponding shader when setting uniforms/drawing objects
 		litObjectShader.Use();
-		glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
-		glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f);
-		glUniform3f(viewPosLoc, camera.Position.x, camera.Position.y, camera.Position.z);
-
-		// modify the lighting data for the lit_object shader
+		GLint lightPosLoc = glGetUniformLocation(litObjectShader.Program, "light.position");
+		GLint viewPosLoc = glGetUniformLocation(litObjectShader.Program, "viewPos");
 		glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
+		glUniform3f(viewPosLoc, camera.Position.x, camera.Position.y, camera.Position.z);
+		// Set lights properties
+		glm::vec3 lightColor;
+		lightColor.x = sin(glfwGetTime() * 2.0f);
+		lightColor.y = sin(glfwGetTime() * 0.7f);
+		lightColor.z = sin(glfwGetTime() * 1.3f);
+		glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f); // Decrease the influence
+		glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f); // Low influence
+		glUniform3f(glGetUniformLocation(litObjectShader.Program, "light.ambient"), ambientColor.x, ambientColor.y, ambientColor.z);
+		glUniform3f(glGetUniformLocation(litObjectShader.Program, "light.diffuse"), diffuseColor.x, diffuseColor.y, diffuseColor.z);
+		glUniform3f(glGetUniformLocation(litObjectShader.Program, "light.specular"), 1.0f, 1.0f, 1.0f);
+		// Set material properties
+		glUniform3f(glGetUniformLocation(litObjectShader.Program, "material.ambient"), 1.0f, 0.5f, 0.31f);
+		glUniform3f(glGetUniformLocation(litObjectShader.Program, "material.diffuse"), 1.0f, 0.5f, 0.31f);
+		glUniform3f(glGetUniformLocation(litObjectShader.Program, "material.specular"), 0.5f, 0.5f, 0.5f); // Specular doesn't have full effect on this object's material
+		glUniform1f(glGetUniformLocation(litObjectShader.Program, "material.shininess"), 32.0f);
 
 		glm::mat4 model;
 		model = glm::mat4();
