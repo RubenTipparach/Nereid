@@ -13,3 +13,6 @@ TritonEngine/Dependencies/
 TritonEngine/.vs/
 TritonEngine/NereidEngine/Debug/
 TritonEngine/NereidEngine/x64/
+NereidEngine/Dependencies/
+NereidEngine/NereidEngine/x64/
+NereidEngine/.vs/
