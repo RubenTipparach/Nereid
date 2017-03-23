@@ -1,7 +1,7 @@
-# TritonEngine
+# Nereid Engine
 A game engine designed to use for long distance space flight simulations with extensive rendering capabilities with far larger worlds than standard game engines.
 
-## Triton Project - Description
+## Description
 Based on the concepts introduced in the XNA Neptune engine, this is a game engine developed specifically to model game mechanics in accurate and natural physics systems. It will also be used to simulate extra terrestrial colonization and space warfare. Using modern physics theories, this engine is designed to support a few theoretical concepts in space travel and warfare. Ranging from propulsion systems such as ion drives, fusion drives, solar sails, and the Alcubiere warp drive. The warfare aspects will include but not limited to energy based weapons such as lasers, plasma projectiles, guided heat seaking missiles, electronic warfare, nuclear weapons, and even biological warfare.
 
 ## Simulation Features
