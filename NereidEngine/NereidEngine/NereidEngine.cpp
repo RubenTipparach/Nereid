@@ -89,7 +89,7 @@ int main()
 	//	1, 2, 3  // Second Triangle
 	//};
 
-	Shader litObjectShader("Shaders/lit_object.vert", "Shaders/standard_mat_shader.frag");
+	Shader litObjectShader("Shaders/textured_diffuse.vert", "Shaders/textured_diffuse.frag");
 	Shader lampShader("Shaders/posonly_vertex.vert", "Shaders/color_frag.frag");
 
 	GLuint VBO, VAO; //for lit object
@@ -97,22 +97,16 @@ int main()
 	glGenBuffers(1, &VBO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesWithNormals), verticesWithNormals, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesNormalsUv), verticesNormalsUv, GL_STATIC_DRAW);
+
 	glBindVertexArray(VAO);
-
-	// Position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
-
-	// Normal attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(1);
-
-	// TexCoord attribute
-	//glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-	//glEnableVertexAttribArray(2);
-
-	glBindVertexArray(0); // Unbind VAO
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(2);
+	glBindVertexArray(0);
 
 	//################### Begin Light Shader stuff ###############################//
 
@@ -125,7 +119,18 @@ int main()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesNoTexCoords), verticesNoTexCoords, GL_STATIC_DRAW);
 	glBindVertexArray(lightVAO);
 
-	//verticesNoTexCoords
+	// Load and create a texture 
+	GLuint texture1;
+	GLuint texture2;
+	GLuint diffuseMap;
+
+	// auto destruct stackiness.
+	{
+		Texture loadTex1("Textures/container.jpg", &texture1);
+		Texture loadTex2("Textures/awesomeface.png", &texture2);
+	}
+
+	Texture loadTex3("Textures/container2.png", &diffuseMap);
 
 	// Set the vertex attributes (only position data for our lamp)
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
@@ -137,15 +142,11 @@ int main()
 	// Uncommenting this call will result in wireframe polygons.
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	// Load and create a texture 
-	GLuint texture1;
-	GLuint texture2;
-
-	// auto destruct stackiness.
-	{
-		Texture loadTex1("Textures/container.jpg", &texture1);
-		Texture loadTex2("Textures/awesomeface.png", &texture2);
-	}
+	litObjectShader.Use();
+	//load textures
+	glUniform1i(glGetUniformLocation(litObjectShader.Program, "material.diffuseTexture"), 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, diffuseMap);
 
 	//glm::mat4 proj = glm::perspective(45.0f, (float)width / (float)height, 0.1f, 100.0f);
 	//glm::ortho(0.0f, 1200.0f, 0.0f, 600.0f, 0.1f, 100.0f);
@@ -196,7 +197,10 @@ int main()
 		glUniform3f(glGetUniformLocation(litObjectShader.Program, "light.specular"), 1.0f, 1.0f, 1.0f);
 		// Set material properties
 		glUniform3f(glGetUniformLocation(litObjectShader.Program, "material.ambient"), 1.0f, 0.5f, 0.31f);
-		glUniform3f(glGetUniformLocation(litObjectShader.Program, "material.diffuse"), 1.0f, 0.5f, 0.31f);
+		glUniform3f(glGetUniformLocation(litObjectShader.Program, "material.diffuseColor"), 1.0f, 0.5f, 0.31f);
+		
+
+
 		glUniform3f(glGetUniformLocation(litObjectShader.Program, "material.specular"), 0.5f, 0.5f, 0.5f); // Specular doesn't have full effect on this object's material
 		glUniform1f(glGetUniformLocation(litObjectShader.Program, "material.shininess"), 32.0f);
 

@@ -17,6 +17,7 @@ struct Light {
 
 in vec3 FragPos;
 in vec3 Normal;
+in vec2 TexCoords;
 
 out vec4 color;
 
@@ -27,7 +28,8 @@ uniform Light light;
 void main()
 {
     // Ambient
-    vec3 ambient = light.ambient * material.ambient;
+	vec3 ambient = light.ambient * vec3(texture(material.diffuseTexture, TexCoords) );//* material.diffuseColor;
+    //vec3 ambient = light.ambient * material.ambient;
 
     // Diffuse
     vec3 norm = normalize(Normal);
@@ -35,7 +37,8 @@ void main()
     float diff = max(dot(norm, lightDir), 0.0);
 
     // lol I can change colors of this thing.
-    vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuseTexture, TexCoords)  * material.diffuse);
+    vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuseTexture, TexCoords) ) ;//* material.diffuseColor;
+
     //vec3 diffuse = light.diffuse * (diff * material.diffuse);
 
     // Specular

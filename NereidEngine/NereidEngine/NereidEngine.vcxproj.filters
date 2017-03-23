@@ -162,6 +162,9 @@
     <None Include="Shaders\standard_mat_shader.frag">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="Shaders\textured_diffuse.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\awesomeface.png">

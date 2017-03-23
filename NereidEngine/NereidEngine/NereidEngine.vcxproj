@@ -195,6 +195,7 @@
     <None Include="Shaders\standard_mat_shader.frag" />
     <None Include="Shaders\textured_diffuse.frag" />
     <None Include="Shaders\vertexshader.vert" />
+    <None Include="Shaders\textured_diffuse.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\awesomeface.png" />
