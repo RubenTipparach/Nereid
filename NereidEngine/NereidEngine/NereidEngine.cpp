@@ -88,7 +88,7 @@ int main()
 	//	1, 2, 3  // Second Triangle
 	//};
 
-	Shader litObjectShader("Shaders/textured_diffuse.vert", "Shaders/Specialized/tex_diff_positional.frag");
+	Shader litObjectShader("Shaders/textured_diffuse.vert", "Shaders/tex_diff_spot.frag");
 	Shader lampShader("Shaders/posonly_vertex.vert", "Shaders/color_frag.frag");
 
 	GLuint VBO, VAO; //for lit object
@@ -167,8 +167,9 @@ int main()
 	// render loop!
 	while (!glfwWindowShouldClose(window))
 	{
-		//glm::vec3 lightPos = glm::vec3(1.2f, 0.1f , 2.0f); //camera.Position + camera.Front; //(1.2f, 0.1f * glfwGetTime(), 2.0f);
-		glm::vec3 lightPos = camera.Position + 2.0f * camera.Front ; //(1.2f, 0.1f * glfwGetTime(), 2.0f);
+		// ***** Switch these two to move the little light around.
+		glm::vec3 lightPos = glm::vec3(1.5f, 0.1f , 5.0f); //camera.Position + camera.Front; //(1.2f, 0.1f * glfwGetTime(), 2.0f);
+		//glm::vec3 lightPos = camera.Position + -.5f * camera.Front ; //(1.2f, 0.1f * glfwGetTime(), 2.0f);
 
 		//always calculate this first
 		GLfloat currentFrame = glfwGetTime();
@@ -204,9 +205,15 @@ int main()
 		GLint lightDirPos = glGetUniformLocation(litObjectShader.Program, "light.position");
 		glUniform3f(lightDirPos, lightPos.x, lightPos.y, lightPos.z);
 
-		glUniform1f(glGetUniformLocation(litObjectShader.Program, "light.constant"), .01f);
-		glUniform1f(glGetUniformLocation(litObjectShader.Program, "light.linear"), 0.09);
-		glUniform1f(glGetUniformLocation(litObjectShader.Program, "light.quadratic"), 0.032);
+		//for positional light
+		glUniform1f(glGetUniformLocation(litObjectShader.Program, "light.constant"), 1.0f);
+		glUniform1f(glGetUniformLocation(litObjectShader.Program, "light.linear"), 0.007f);
+		glUniform1f(glGetUniformLocation(litObjectShader.Program, "light.quadratic"), 0.0002f);
+		
+		//for the spot aspect
+		glUniform3f(glGetUniformLocation(litObjectShader.Program, "light.direction"), -lightPos.x, -lightPos.y, -lightPos.z);
+		glUniform1f(glGetUniformLocation(litObjectShader.Program, "light.cutOff"), glm::cos(glm::radians(12.5f)));
+		glUniform1f(glGetUniformLocation(litObjectShader.Program, "light.outerCutOff"), glm::cos(glm::radians(17.5f)));
 
 		// Set lights properties
 		glm::vec3 lightColor;
@@ -245,7 +252,7 @@ int main()
 
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 
-			glUniform3f(glGetUniformLocation(litObjectShader.Program, "material.diffuseColor"), randomColors[i].x, randomColors[i].y, randomColors[i].z);
+			//glUniform3f(glGetUniformLocation(litObjectShader.Program, "material.diffuseColor"), randomColors[i].x, randomColors[i].y, randomColors[i].z);
 
 			drawAtLocation(&litObjectShader, glfwGetTime(), model);
 		}

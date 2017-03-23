@@ -165,9 +165,18 @@
     <None Include="Shaders\textured_diffuse.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shaders\Specialized\tex_diff_directional.frag" />
-    <None Include="Shaders\Specialized\tex_diff_directional.vert" />
-    <None Include="Shaders\Specialized\tex_diff_positional.frag" />
+    <None Include="Shaders\tex_diff_directional.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\tex_diff_directional.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\tex_diff_positional.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\tex_diff_spot.frag">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\awesomeface.png">

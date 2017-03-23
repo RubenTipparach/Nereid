@@ -192,9 +192,10 @@
     <None Include="Shaders\fragshader.frag" />
     <None Include="Shaders\lit_object.frag" />
     <None Include="Shaders\posonly_vertex.vert" />
-    <None Include="Shaders\Specialized\tex_diff_directional.frag" />
-    <None Include="Shaders\Specialized\tex_diff_directional.vert" />
-    <None Include="Shaders\Specialized\tex_diff_positional.frag" />
+    <None Include="Shaders\tex_diff_directional.frag" />
+    <None Include="Shaders\tex_diff_directional.vert" />
+    <None Include="Shaders\tex_diff_positional.frag" />
+    <None Include="Shaders\tex_diff_spot.frag" />
     <None Include="Shaders\standard_mat_shader.frag" />
     <None Include="Shaders\textured_diffuse.frag" />
     <None Include="Shaders\vertexshader.vert" />
