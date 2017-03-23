@@ -89,7 +89,7 @@ int main()
 	//	1, 2, 3  // Second Triangle
 	//};
 
-	Shader litObjectShader("Shaders/textured_diffuse.vert", "Shaders/textured_diffuse.frag");
+	Shader litObjectShader("Shaders/textured_diffuse.vert", "Shaders/Specialized/tex_diff_positional.frag");
 	Shader lampShader("Shaders/posonly_vertex.vert", "Shaders/color_frag.frag");
 
 	GLuint VBO, VAO; //for lit object
@@ -177,7 +177,7 @@ int main()
 	
 
 		//use that translation stuff
-		//GLint modelLoc;
+		GLint modelLoc;
 		//math_test(&ourShader, glfwGetTime(), &modelLoc);
 
 		//glBindVertexArray(VAO);
@@ -187,10 +187,19 @@ int main()
 		// lighting stuff...
 		// Use cooresponding shader when setting uniforms/drawing objects
 		litObjectShader.Use();
-		GLint lightPosLoc = glGetUniformLocation(litObjectShader.Program, "light.position");
+		//GLint lightPosLoc = glGetUniformLocation(litObjectShader.Program, "light.position");
+		//glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
+
 		GLint viewPosLoc = glGetUniformLocation(litObjectShader.Program, "viewPos");
-		glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
 		glUniform3f(viewPosLoc, camera.Position.x, camera.Position.y, camera.Position.z);
+
+		GLint lightDirPos = glGetUniformLocation(litObjectShader.Program, "light.position");
+		glUniform3f(lightDirPos, lightPos.x, lightPos.y, lightPos.z);
+
+		glUniform1f(glGetUniformLocation(litObjectShader.Program, "light.constant"), 1.0f);
+		glUniform1f(glGetUniformLocation(litObjectShader.Program, "light.linear"), 0.09);
+		glUniform1f(glGetUniformLocation(litObjectShader.Program, "light.quadratic"), 0.032);
+
 		// Set lights properties
 		glm::vec3 lightColor;
 		lightColor.x = 1.0f;// sin(glfwGetTime() * 2.0f);
@@ -203,9 +212,7 @@ int main()
 		glUniform3f(glGetUniformLocation(litObjectShader.Program, "light.specular"), 1.0f, 1.0f, 1.0f);
 		// Set material properties
 		glUniform3f(glGetUniformLocation(litObjectShader.Program, "material.ambient"), 1.0f, 0.5f, 0.31f);
-		glUniform3f(glGetUniformLocation(litObjectShader.Program, "material.diffuseColor"), 1.0f, 1.0f, 1.0f);
-		
-
+		glUniform3f(glGetUniformLocation(litObjectShader.Program, "material.diffuseColor"), 1.0f, 1.0f, 1.0f);		
 
 		glUniform3f(glGetUniformLocation(litObjectShader.Program, "material.specularColor"), 1.0f, 1.0f, 1.0f); // Specular doesn't have full effect on this object's material
 		glUniform1f(glGetUniformLocation(litObjectShader.Program, "material.shininess"), 32.0f);
@@ -215,11 +222,25 @@ int main()
 		GLfloat angle = glm::radians(20.0f) * glfwGetTime();
 		model = glm::rotate(model, angle, glm::vec3(0.0, 1.0, 0.0));
 
-
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		//glDrawArrays(GL_TRIANGLES, 0, 36);
+		//drawAtLocation(&litObjectShader, glfwGetTime(),  model);
+
+
+		// Drawing and rotating those boxes.
+		for (GLuint i = 0; i < 10; i++)
+		{
+			glm::mat4 model;
+			model = glm::translate(model, cubePositions[i]);
+			GLfloat angle = glm::radians(1.0f) * (i + 1) * glfwGetTime();
+			model = glm::rotate(model, angle, glm::vec3(1.0f, 0.3f, 0.5f));
+
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+
+			drawAtLocation(&litObjectShader, glfwGetTime(), model);
+		}
+
 		glBindVertexArray(0);
-		drawAtLocation(&litObjectShader, glfwGetTime(),  model);
 
 
 		lampShader.Use();
@@ -234,17 +255,8 @@ int main()
 		glBindVertexArray(lightVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
-		// Drawing and rotating those boxes.
-		//for (GLuint i = 0; i < 10; i++)
-		//{
-		//	glm::mat4 model;
-		//	model = glm::translate(model, cubePositions[i]);
-		//	GLfloat angle = glm::radians(20.0f) * (i+1) * glfwGetTime();
-		//	model = glm::rotate(model, angle, glm::vec3(1.0f, 0.3f, 0.5f));
-		//	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-		//	glDrawArrays(GL_TRIANGLES, 0, 36);
-		//}
+
 
 		glBindVertexArray(0);
 
