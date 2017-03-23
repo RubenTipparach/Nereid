@@ -95,9 +95,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TritonEngine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -122,6 +119,9 @@
     <ClCompile Include="Cube.cpp">
       <Filter>Source Files\Mesh\Primitive</Filter>
     </ClCompile>
+    <ClCompile Include="NereidEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="libs\glfw3.lib">
@@ -138,25 +138,30 @@
     <None Include="Shaders\fragshader.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shaders\vertexshader.vs">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="Shaders\color_frag.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Shaders\color_vertex.vs">
       <Filter>Shaders</Filter>
     </None>
     <None Include="Shaders\lit_object.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shaders\posonly_vertex.vs">
+    <None Include="Shaders\lit_object.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shaders\lit_object.vs">
+    <None Include="Shaders\posonly_vertex.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shaders\standard_mat_shader.frag" />
+    <None Include="Shaders\color_vertex.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\vertexshader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\textured_diffuse.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\standard_mat_shader.frag">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\awesomeface.png">
@@ -166,6 +171,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="Textures\wall.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Textures\container2.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

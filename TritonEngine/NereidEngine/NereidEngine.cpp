@@ -30,62 +30,7 @@ bool firstMouse = true;
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
-/// ModelLoc -> model location pointer
-void math_test(Shader* ourShader, float time, GLint* modelLoc)
-{
-	glm::vec4 vec(0.0f, 0.0f, 0.0f, 1.0f);
-	glm::mat4 trans;
-	//trans = glm::translate(trans, glm::vec3(3.0f, 1.0f, 0.0f));
-	//vec = trans * vec;
-
-	//trans = glm::translate(trans, glm::vec3(0.0f, time* -0.1f, 0.0f));
-	//trans = glm::rotate(trans, 0.1f * time, glm::vec3(0.0, 1.0, 1.0));
-
-	//it uses radians now!! Also: L = T * R * S
-	//trans = glm::translate(trans, glm::vec3(0.0f, time* -0.1f, 0.0f));
-	//vec = trans * vec;
-		
-	//trans = glm::rotate(trans, glm::radians(10.0f)* time, glm::vec3(1.0, 1.0, 0.0)); 
-	//trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
-	//vec = trans * vec;
-
-	//GLuint transformLoc = glGetUniformLocation(ourShader->Program, "transform");
-	//glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(model));
-
-	//experimenting with perspective
-	glm::mat4 model;
-	model = glm::rotate(model, time*glm::radians(-55.00f), glm::vec3(1.0f, 1.0f, 0.0f));
-
-	// Note that we're translating the scene in the reverse direction of where we want to move
-	/*glm::mat4 view;
-	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));*/
-	//GLfloat radius = 10.0f;
-	//GLfloat camX = sin(time) * radius;
-	//GLfloat camZ = cos(time) * radius;
-
-	//direction.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
-	//direction.y = sin(glm::radians(pitch));
-	//direction.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
-
-	glm::mat4 view;
-	//view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));//changing the view matrix moves the camera.
-	view = camera.GetViewMatrix();
-
-
-	glm::mat4 projection;
-	projection = glm::perspective(camera.Zoom, (float)WIDTH / (float)HEIGHT, 0.1f, 1000.0f);
-
-	*modelLoc = glGetUniformLocation(ourShader->Program, "model");
-	glUniformMatrix4fv(*modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
-	GLint viewSpace = glGetUniformLocation(ourShader->Program, "view");
-	glUniformMatrix4fv(viewSpace, 1, GL_FALSE, glm::value_ptr(view));
-
-	GLint projSpace = glGetUniformLocation(ourShader->Program, "projection");
-	glUniformMatrix4fv(projSpace, 1, GL_FALSE, glm::value_ptr(projection));
-	//std::cout << vec.x << "," << vec.y << "," << vec.z << std::endl;
-}
-
+// to move the game objects.
 void drawAtLocation(Shader* ourShader, float time, glm::mat4 model)
 {
 	glm::mat4 view;
@@ -114,7 +59,7 @@ int main()
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
 	// Create a GLFWwindow object that we can use for GLFW's functions
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Triton Engine", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Nereid Engine", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
 
@@ -144,8 +89,8 @@ int main()
 	//	1, 2, 3  // Second Triangle
 	//};
 
-	Shader litObjectShader("Shaders/lit_object.vs", "Shaders/standard_mat_shader.frag");
-	Shader lampShader("Shaders/posonly_vertex.vs", "Shaders/color_frag.frag");
+	Shader litObjectShader("Shaders/lit_object.vert", "Shaders/standard_mat_shader.frag");
+	Shader lampShader("Shaders/posonly_vertex.vert", "Shaders/color_frag.frag");
 
 	GLuint VBO, VAO; //for lit object
 	glGenVertexArrays(1, &VAO);
@@ -241,9 +186,9 @@ int main()
 		glUniform3f(viewPosLoc, camera.Position.x, camera.Position.y, camera.Position.z);
 		// Set lights properties
 		glm::vec3 lightColor;
-		lightColor.x = sin(glfwGetTime() * 2.0f);
-		lightColor.y = sin(glfwGetTime() * 0.7f);
-		lightColor.z = sin(glfwGetTime() * 1.3f);
+		lightColor.x = 2.0f;// sin(glfwGetTime() * 2.0f);
+		lightColor.y = .7f;//sin(glfwGetTime() * 0.7f);
+		lightColor.z = 1.3f;// sin(glfwGetTime() * 1.3f);
 		glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f); // Decrease the influence
 		glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f); // Low influence
 		glUniform3f(glGetUniformLocation(litObjectShader.Program, "light.ambient"), ambientColor.x, ambientColor.y, ambientColor.z);

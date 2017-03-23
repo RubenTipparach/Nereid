@@ -22,8 +22,9 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{5E814756-DEA9-4B95-9B92-8FDA712795CC}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>TritonEngine</RootNamespace>
+    <RootNamespace>NereidEngine</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <ProjectName>NereidEngine</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -177,7 +178,7 @@
     </ClCompile>
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transform.cpp" />
-    <ClCompile Include="TritonEngine.cpp" />
+    <ClCompile Include="NereidEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="libs\glew32s.lib" />
@@ -185,18 +186,20 @@
     <Library Include="libs\SOIL.lib" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\lit_object.vs" />
+    <None Include="Shaders\lit_object.vert" />
     <None Include="Shaders\color_frag.frag" />
-    <None Include="Shaders\color_vertex.vs" />
+    <None Include="Shaders\color_vertex.vert" />
     <None Include="Shaders\fragshader.frag" />
     <None Include="Shaders\lit_object.frag" />
-    <None Include="Shaders\posonly_vertex.vs" />
+    <None Include="Shaders\posonly_vertex.vert" />
     <None Include="Shaders\standard_mat_shader.frag" />
-    <None Include="Shaders\vertexshader.vs" />
+    <None Include="Shaders\textured_diffuse.frag" />
+    <None Include="Shaders\vertexshader.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\awesomeface.png" />
     <Image Include="Textures\container.jpg" />
+    <Image Include="Textures\container2.png" />
     <Image Include="Textures\wall.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
