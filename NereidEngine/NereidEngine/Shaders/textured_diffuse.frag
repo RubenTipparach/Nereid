@@ -1,9 +1,10 @@
 #version 330 core
 struct Material {
     sampler2D diffuseTexture;
+	 sampler2D specularTexture;
     vec3 ambient;
     vec3 diffuseColor;
-    vec3 specular;
+    vec3 specularColor;
     float shininess;
 };
 
@@ -28,7 +29,7 @@ uniform Light light;
 void main()
 {
     // Ambient
-	vec3 ambient = light.ambient * vec3(texture(material.diffuseTexture, TexCoords) );//* material.diffuseColor;
+	vec3 ambient = light.ambient * vec3(texture(material.diffuseTexture, TexCoords) )* material.diffuseColor;
     //vec3 ambient = light.ambient * material.ambient;
 
     // Diffuse
@@ -37,7 +38,7 @@ void main()
     float diff = max(dot(norm, lightDir), 0.0);
 
     // lol I can change colors of this thing.
-    vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuseTexture, TexCoords) ) ;//* material.diffuseColor;
+    vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuseTexture, TexCoords) ) * material.diffuseColor;
 
     //vec3 diffuse = light.diffuse * (diff * material.diffuse);
 
@@ -45,7 +46,7 @@ void main()
     vec3 viewDir = normalize(viewPos - FragPos);
     vec3 reflectDir = reflect(-lightDir, norm);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-    vec3 specular = light.specular * (spec * material.specular);
+    vec3 specular = light.specular * (spec * vec3(texture(material.specularTexture, TexCoords))) * material.specularColor;
 
     vec3 result = ambient + diffuse + specular;
     color = vec4(result, 1.0f);

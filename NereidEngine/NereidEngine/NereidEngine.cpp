@@ -123,14 +123,16 @@ int main()
 	GLuint texture1;
 	GLuint texture2;
 	GLuint diffuseMap;
+	GLuint specularMap;
 
 	// auto destruct stackiness.
 	{
 		Texture loadTex1("Textures/container.jpg", &texture1);
 		Texture loadTex2("Textures/awesomeface.png", &texture2);
+		Texture loadTex3("Textures/container2.png", &diffuseMap);
+		Texture loadTex4("Textures/container2_specular.png", &specularMap);
 	}
 
-	Texture loadTex3("Textures/container2.png", &diffuseMap);
 
 	// Set the vertex attributes (only position data for our lamp)
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
@@ -145,8 +147,11 @@ int main()
 	litObjectShader.Use();
 	//load textures
 	glUniform1i(glGetUniformLocation(litObjectShader.Program, "material.diffuseTexture"), 0);
+	glUniform1i(glGetUniformLocation(litObjectShader.Program, "material.specularTexture"), 1);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, diffuseMap);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, specularMap);
 
 	//glm::mat4 proj = glm::perspective(45.0f, (float)width / (float)height, 0.1f, 100.0f);
 	//glm::ortho(0.0f, 1200.0f, 0.0f, 600.0f, 0.1f, 100.0f);
@@ -154,7 +159,8 @@ int main()
 	// render loop!
 	while (!glfwWindowShouldClose(window))
 	{
-		glm::vec3 lightPos = glm::vec3(1.2f, 0.1f , 2.0f); //camera.Position + camera.Front; //(1.2f, 0.1f * glfwGetTime(), 2.0f);
+		//glm::vec3 lightPos = glm::vec3(1.2f, 0.1f , 2.0f); //camera.Position + camera.Front; //(1.2f, 0.1f * glfwGetTime(), 2.0f);
+		glm::vec3 lightPos = camera.Position + 2.0f * camera.Front ; //(1.2f, 0.1f * glfwGetTime(), 2.0f);
 
 		//always calculate this first
 		GLfloat currentFrame = glfwGetTime();
@@ -187,9 +193,9 @@ int main()
 		glUniform3f(viewPosLoc, camera.Position.x, camera.Position.y, camera.Position.z);
 		// Set lights properties
 		glm::vec3 lightColor;
-		lightColor.x = 2.0f;// sin(glfwGetTime() * 2.0f);
-		lightColor.y = .7f;//sin(glfwGetTime() * 0.7f);
-		lightColor.z = 1.3f;// sin(glfwGetTime() * 1.3f);
+		lightColor.x = 1.0f;// sin(glfwGetTime() * 2.0f);
+		lightColor.y = 1.0f;//sin(glfwGetTime() * 0.7f);
+		lightColor.z = 1.0f;// sin(glfwGetTime() * 1.3f);
 		glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f); // Decrease the influence
 		glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f); // Low influence
 		glUniform3f(glGetUniformLocation(litObjectShader.Program, "light.ambient"), ambientColor.x, ambientColor.y, ambientColor.z);
@@ -197,11 +203,11 @@ int main()
 		glUniform3f(glGetUniformLocation(litObjectShader.Program, "light.specular"), 1.0f, 1.0f, 1.0f);
 		// Set material properties
 		glUniform3f(glGetUniformLocation(litObjectShader.Program, "material.ambient"), 1.0f, 0.5f, 0.31f);
-		glUniform3f(glGetUniformLocation(litObjectShader.Program, "material.diffuseColor"), 1.0f, 0.5f, 0.31f);
+		glUniform3f(glGetUniformLocation(litObjectShader.Program, "material.diffuseColor"), 1.0f, 1.0f, 1.0f);
 		
 
 
-		glUniform3f(glGetUniformLocation(litObjectShader.Program, "material.specular"), 0.5f, 0.5f, 0.5f); // Specular doesn't have full effect on this object's material
+		glUniform3f(glGetUniformLocation(litObjectShader.Program, "material.specularColor"), 1.0f, 1.0f, 1.0f); // Specular doesn't have full effect on this object's material
 		glUniform1f(glGetUniformLocation(litObjectShader.Program, "material.shininess"), 32.0f);
 
 		glm::mat4 model;
@@ -218,7 +224,6 @@ int main()
 
 		lampShader.Use();
 
-		
 		model = glm::mat4();
 		model = glm::translate(model, lightPos);
 		model = glm::scale(model, glm::vec3(0.2f));
