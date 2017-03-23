@@ -1,6 +1,4 @@
-﻿// TritonEngine.cpp : Defines the entry point for the console application.
-// https://learnopengl.com/
-#include <iostream>
+﻿#include <iostream>
 #include "stdafx.h"
 
 #define GLEW_STATIC
@@ -8,6 +6,7 @@
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
+#include <glm/gtc/random.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -156,6 +155,15 @@ int main()
 	//glm::mat4 proj = glm::perspective(45.0f, (float)width / (float)height, 0.1f, 100.0f);
 	//glm::ortho(0.0f, 1200.0f, 0.0f, 600.0f, 0.1f, 100.0f);
 
+	glm::vec3 randomColors[10];
+	
+	// Drawing and rotating those boxes.
+	for (GLuint i = 0; i < 10; i++)
+	{
+		glm::vec3 colRan(glm::linearRand(0.0f, 1.0f), glm::linearRand(0.0f, 1.0f), glm::linearRand(0.0f, 1.0f));
+		randomColors[i] = colRan;
+	}
+
 	// render loop!
 	while (!glfwWindowShouldClose(window))
 	{
@@ -196,7 +204,7 @@ int main()
 		GLint lightDirPos = glGetUniformLocation(litObjectShader.Program, "light.position");
 		glUniform3f(lightDirPos, lightPos.x, lightPos.y, lightPos.z);
 
-		glUniform1f(glGetUniformLocation(litObjectShader.Program, "light.constant"), 1.0f);
+		glUniform1f(glGetUniformLocation(litObjectShader.Program, "light.constant"), .01f);
 		glUniform1f(glGetUniformLocation(litObjectShader.Program, "light.linear"), 0.09);
 		glUniform1f(glGetUniformLocation(litObjectShader.Program, "light.quadratic"), 0.032);
 
@@ -236,6 +244,8 @@ int main()
 			model = glm::rotate(model, angle, glm::vec3(1.0f, 0.3f, 0.5f));
 
 			glDrawArrays(GL_TRIANGLES, 0, 36);
+
+			glUniform3f(glGetUniformLocation(litObjectShader.Program, "material.diffuseColor"), randomColors[i].x, randomColors[i].y, randomColors[i].z);
 
 			drawAtLocation(&litObjectShader, glfwGetTime(), model);
 		}
