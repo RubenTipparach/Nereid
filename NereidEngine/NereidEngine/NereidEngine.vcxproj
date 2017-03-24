@@ -96,7 +96,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;SOIL.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -142,6 +142,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
+    <Text Include="Shaders\tex_diff_standard.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -155,20 +156,18 @@
     <ClInclude Include="include\GL\glxew.h" />
     <ClInclude Include="include\GL\wglew.h" />
     <ClInclude Include="include\SOIL\SOIL.h" />
-    <ClInclude Include="MeshData.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="Texture.h" />
     <ClInclude Include="Transform.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="MeshData.cpp" />
-    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -176,16 +175,17 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="NereidEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Library Include="libs\assimp.lib" />
     <Library Include="libs\glew32s.lib" />
     <Library Include="libs\glfw3.lib" />
     <Library Include="libs\SOIL.lib" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Shaders\lit_object.vert" />
     <None Include="Shaders\color_frag.frag" />
     <None Include="Shaders\color_vertex.vert" />
@@ -199,6 +199,7 @@
     <None Include="Shaders\tex_diff_spot.frag" />
     <None Include="Shaders\standard_mat_shader.frag" />
     <None Include="Shaders\textured_diffuse.frag" />
+    <None Include="Shaders\tex_diff_standard.vert" />
     <None Include="Shaders\vertexshader.vert" />
     <None Include="Shaders\textured_diffuse.vert" />
   </ItemGroup>
@@ -211,17 +212,35 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\Assimp.redist.3.0.0\build\native\Assimp.redist.targets" Condition="Exists('..\packages\Assimp.redist.3.0.0\build\native\Assimp.redist.targets')" />
+    <Import Project="..\packages\Assimp.3.0.0\build\native\Assimp.targets" Condition="Exists('..\packages\Assimp.3.0.0\build\native\Assimp.targets')" />
   </ImportGroup>
+  <!-- Adding my custom shaders, directories still don't copy :+| -->
   <Target Name="CopyShaders" AfterTargets="Build">
     <ItemGroup>
       <ShaderFiles Include="Shaders/*" />
     </ItemGroup>
     <Copy DestinationFolder="Debug/Shaders/" SkipUnchangedFiles="True" SourceFiles="@(ShaderFiles)" UseHardlinksIfPossible="True" />
   </Target>
+  <!-- DLLS for dynamic linking -->
+  <!--<Target Name="CopyDlls" AfterTargets="Build">
+    <ItemGroup>
+      <DLLS Include="Dlls/*" />
+    </ItemGroup>
+    <Copy DestinationFolder="Debug/" SkipUnchangedFiles="True" SourceFiles="@(DLLS)" UseHardlinksIfPossible="True" />
+  </Target>-->
+  <!-- Textures -->
   <Target Name="CopyTextures" AfterTargets="Build">
     <ItemGroup>
       <TextureFiles Include="Textures/*" />
     </ItemGroup>
     <Copy DestinationFolder="Debug/Textures/" SkipUnchangedFiles="True" SourceFiles="@(TextureFiles)" UseHardlinksIfPossible="True" />
+  </Target>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Assimp.redist.3.0.0\build\native\Assimp.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Assimp.redist.3.0.0\build\native\Assimp.redist.targets'))" />
+    <Error Condition="!Exists('..\packages\Assimp.3.0.0\build\native\Assimp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Assimp.3.0.0\build\native\Assimp.targets'))" />
   </Target>
 </Project>

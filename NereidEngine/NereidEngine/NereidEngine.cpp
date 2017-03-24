@@ -10,16 +10,20 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <SOIL/SOIL.h>
+
 #include "Global.h"
-#include "Texture.h"
 #include "Camera.h"
 #include "Shader.h"
 #include "Cube.h"
+#include "Model.h"
 
 // Function prototypes
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+void LoadTexture(const char* filename, GLuint* texture);
+
 void Do_Movement();
 
 // Shaders TODO: add these to shading scripts to load them at run time.
@@ -89,7 +93,10 @@ int main()
 	//};
 
 	Shader litObjectShader("Shaders/textured_diffuse.vert", "Shaders/tex_diff_all_lights.frag");
+	Shader customModelShader("Shaders/textured_diffuse.vert", "Shaders/tex_diff_standard.frag");
 	Shader lampShader("Shaders/posonly_vertex.vert", "Shaders/color_frag.frag");
+
+	Model ourModel("Textures/nanosuit.obj");
 
 	GLuint VBO, VAO; //for lit object
 	glGenVertexArrays(1, &VAO);
@@ -125,13 +132,10 @@ int main()
 	GLuint specularMap;
 
 	// auto destruct stackiness.
-	{
-		Texture loadTex1("Textures/container.jpg", &texture1);
-		Texture loadTex2("Textures/awesomeface.png", &texture2);
-		Texture loadTex3("Textures/container2.png", &diffuseMap);
-		Texture loadTex4("Textures/container2_specular.png", &specularMap);
-	}
-
+	LoadTexture("Textures/container.jpg", &texture1);
+	LoadTexture("Textures/awesomeface.png", &texture2);
+	LoadTexture("Textures/container2.png", &diffuseMap);
+	LoadTexture("Textures/container2_specular.png", &specularMap);
 
 	// Set the vertex attributes (only position data for our lamp)
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
@@ -294,12 +298,27 @@ int main()
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 
 			//glUniform3f(glGetUniformLocation(litObjectShader.Program, "material.diffuseColor"), randomColors[i].x, randomColors[i].y, randomColors[i].z);
-
 			drawAtLocation(&litObjectShader, glfwGetTime(), model);
 		}
-
 		glBindVertexArray(0);
 
+
+		customModelShader.Use();
+		
+		for (GLuint i = 0; i < 20; i++)
+		{
+			// Draw the loaded model
+			glm::mat4 model2;
+			model2 = glm::translate(model2, cubePositions[i]); // Translate it down a bit so it's at the center of the scene
+			model2 = glm::scale(model2, glm::vec3(0.1f, 0.1f, 0.1f));	// It's a bit too big for our scene, so scale it down
+
+			GLfloat angle2 = glm::radians(1.0f) * (i + 1) * glfwGetTime();
+			model2 = glm::rotate(model, angle2, glm::vec3(1.0f, 0.3f, 0.5f));
+
+			drawAtLocation(&customModelShader, glfwGetTime(), model2);
+
+			ourModel.Draw(customModelShader);
+		}
 
 		lampShader.Use();
 
@@ -311,10 +330,20 @@ int main()
 		drawAtLocation(&lampShader, glfwGetTime(), model);
 
 		glBindVertexArray(lightVAO);
+
 		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glBindVertexArray(0);
 
+		for (GLuint i = 0; i < 4; i++)
+		{
+			glm::mat4 model;
+			model = glm::translate(model, pointLightPositions[i]);
+			model = glm::scale(model, glm::vec3(0.2f));
 
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+
+			//glUniform3f(glGetUniformLocation(litObjectShader.Program, "material.diffuseColor"), randomColors[i].x, randomColors[i].y, randomColors[i].z);
+			drawAtLocation(&lampShader, glfwGetTime(), model);
+		}
 
 		glBindVertexArray(0);
 
@@ -383,4 +412,24 @@ void Do_Movement()
 		camera.ProcessKeyboard(LEFT, deltaTime);
 	if (keys[GLFW_KEY_D])
 		camera.ProcessKeyboard(RIGHT, deltaTime);
+}
+
+// * WARNING * This method should be deprecated!
+void LoadTexture(const char* filename, GLuint* texture)
+{
+	glGenTextures(1, texture);
+	glBindTexture(GL_TEXTURE_2D, *texture); // All upcoming GL_TEXTURE_2D operations now have effect on our texture object
+											// Set our texture parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// Set texture wrapping to GL_REPEAT
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// Set texture filtering
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Load, create texture and generate mipmaps
+	int width, height;
+	unsigned char* image = SOIL_load_image(filename, &width, &height, 0, SOIL_LOAD_RGB);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	SOIL_free_image_data(image);
+	glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
 }
