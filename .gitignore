@@ -17,7 +17,8 @@ NereidEngine/Dependencies/
 NereidEngine/NereidEngine/x64/
 NereidEngine/.vs/
 NereidEngine/NereidEngine/Debug/
+NereidEngine/Debug/
 
 !*.dll
 !*.lib
-NereidEngine/Debug/
+!*.obj
