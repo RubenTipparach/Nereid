@@ -17,3 +17,6 @@ NereidEngine/Dependencies/
 NereidEngine/NereidEngine/x64/
 NereidEngine/.vs/
 NereidEngine/NereidEngine/Debug/
+
+!*.dll
+NereidEngine/Debug/
