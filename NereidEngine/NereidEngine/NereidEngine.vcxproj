@@ -192,6 +192,7 @@
     <None Include="Shaders\fragshader.frag" />
     <None Include="Shaders\lit_object.frag" />
     <None Include="Shaders\posonly_vertex.vert" />
+    <None Include="Shaders\tex_diff_all_lights.frag" />
     <None Include="Shaders\tex_diff_directional.frag" />
     <None Include="Shaders\tex_diff_directional.vert" />
     <None Include="Shaders\tex_diff_positional.frag" />

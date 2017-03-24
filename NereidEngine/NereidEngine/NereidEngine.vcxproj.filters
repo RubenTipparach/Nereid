@@ -177,6 +177,7 @@
     <None Include="Shaders\tex_diff_spot.frag">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="Shaders\tex_diff_all_lights.frag" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\awesomeface.png">
