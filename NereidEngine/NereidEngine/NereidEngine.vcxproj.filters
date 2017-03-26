@@ -179,6 +179,7 @@
     </None>
     <None Include="packages.config" />
     <None Include="Shaders\tex_diff_standard.vert" />
+    <None Include="Textures\CrewMesh.FBX" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\awesomeface.png">

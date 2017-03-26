@@ -3,7 +3,7 @@
 #include <GLFW/glfw3.h>
 
 // Window dimensions
- const GLuint WIDTH = 800, HEIGHT = 600;
+ const GLuint WIDTH = 1600, HEIGHT = 900;
 
  // Deltatime
  GLfloat deltaTime = 0.0f;	// Time between current frame and last frame

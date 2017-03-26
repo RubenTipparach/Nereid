@@ -84,7 +84,7 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 	//glEnable(GL_CULL_FACE);
 	//glFrontFace(GL_CCW);
-	//glCullFace(GL_FRONT);
+	glCullFace(GL_BACK);
 
 
 	//GLuint indices[] = {  // Note that we start from 0!
@@ -96,7 +96,7 @@ int main()
 	Shader customModelShader("Shaders/textured_diffuse.vert", "Shaders/tex_diff_standard.frag");
 	Shader lampShader("Shaders/posonly_vertex.vert", "Shaders/color_frag.frag");
 
-	Model ourModel("Textures/nanosuit.obj");
+	Model ourModel("Textures/CrewMesh.obj");
 
 	GLuint VBO, VAO; //for lit object
 	glGenVertexArrays(1, &VAO);
@@ -174,11 +174,24 @@ int main()
 		glm::vec3(0.0f,  0.0f, -3.0f)
 	};
 
+	glm::vec3 pointLightColors[] = {
+		glm::vec3(0.7f,  0.2f,  2.0f),
+		glm::vec3(2.3f, -3.3f, -4.0f),
+		glm::vec3(-4.0f,  2.0f, -12.0f),
+		glm::vec3(0.0f,  0.0f, -3.0f)
+	};
+
 	litObjectShader.Use();
 	glUniform3f(glGetUniformLocation(litObjectShader.Program, "dirLight.direction"), -0.2f, -1.0f, -0.3f);
 	glUniform3f(glGetUniformLocation(litObjectShader.Program, "dirLight.ambient"), 0.05f, 0.05f, 0.05f);
-	glUniform3f(glGetUniformLocation(litObjectShader.Program, "dirLight.diffuse"), 0.4f, 0.4f, 0.4f);
+	glUniform3f(glGetUniformLocation(litObjectShader.Program, "dirLight.diffuse"), 0.2f, 0.2f, 0.2f);
 	glUniform3f(glGetUniformLocation(litObjectShader.Program, "dirLight.specular"), 0.5f, 0.5f, 0.5f);
+
+	customModelShader.Use();
+	glUniform3f(glGetUniformLocation(customModelShader.Program, "dirLight.direction"), -0.2f, -1.0f, -0.3f);
+	glUniform3f(glGetUniformLocation(customModelShader.Program, "dirLight.ambient"), 0.05f, 0.05f, 0.05f);
+	glUniform3f(glGetUniformLocation(customModelShader.Program, "dirLight.diffuse"), 0.2f, 0.2f, 0.2f);
+	glUniform3f(glGetUniformLocation(customModelShader.Program, "dirLight.specular"), 0.5f, 0.5f, 0.5f);
 
 	//for the spot aspect
 	//glUniform3f(glGetUniformLocation(litObjectShader.Program, "light.direction"), -lightPos.x, -lightPos.y, -lightPos.z);
@@ -254,7 +267,7 @@ int main()
 			//for positional light
 			glUniform3f(glGetUniformLocation(litObjectShader.Program, lightAmbient.c_str()), 0.05f, 0.05f, 0.05f);
 			glUniform3f(glGetUniformLocation(litObjectShader.Program, lightname.c_str()), 0.8f, 0.8f, 0.8f);
-			glUniform3f(glGetUniformLocation(litObjectShader.Program, lightSpec.c_str()), 1.0f, 1.0f, 1.0f);
+			glUniform3f(glGetUniformLocation(litObjectShader.Program, lightSpec.c_str()), pointLightColors[i].x, pointLightColors[i].y, pointLightColors[i].z);//1.0f, 1.0f, 1.0f);
 
 			glUniform1f(glGetUniformLocation(litObjectShader.Program, lightConst.c_str()), 1.0f);
 			glUniform1f(glGetUniformLocation(litObjectShader.Program, lightLin.c_str()), 0.09);
@@ -288,37 +301,67 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, specularMap);
 
 		// Drawing and rotating those boxes.
-		for (GLuint i = 0; i < 10; i++)
-		{
-			glm::mat4 model;
-			model = glm::translate(model, cubePositions[i]);
-			GLfloat angle = glm::radians(1.0f) * (i + 1) * glfwGetTime();
-			model = glm::rotate(model, angle, glm::vec3(1.0f, 0.3f, 0.5f));
+		//for (GLuint i = 0; i < 10; i++)
+		//{
+		//	glm::mat4 model;
+		//	model = glm::translate(model, cubePositions[i]);
+		//	GLfloat angle = glm::radians(1.0f) * (i + 1) * glfwGetTime();
+		//	model = glm::rotate(model, angle, glm::vec3(1.0f, 0.3f, 0.5f));
 
-			glDrawArrays(GL_TRIANGLES, 0, 36);
+		//	glDrawArrays(GL_TRIANGLES, 0, 36);
 
-			//glUniform3f(glGetUniformLocation(litObjectShader.Program, "material.diffuseColor"), randomColors[i].x, randomColors[i].y, randomColors[i].z);
-			drawAtLocation(&litObjectShader, glfwGetTime(), model);
-		}
+		//	//glUniform3f(glGetUniformLocation(litObjectShader.Program, "material.diffuseColor"), randomColors[i].x, randomColors[i].y, randomColors[i].z);
+		//	drawAtLocation(&litObjectShader, glfwGetTime(), model);
+		//}
 		glBindVertexArray(0);
 
 
 		customModelShader.Use();
+
+		glUniform3f(glGetUniformLocation(customModelShader.Program, "diffuseColor"), 1.0f, 1.0f, 1.0f);
+		glUniform3f(glGetUniformLocation(customModelShader.Program, "specularColor"), 1.0f, 1.0f, 1.0f);
+		glUniform1f(glGetUniformLocation(customModelShader.Program, "material.shininess"), 4.0f);
 		
-		for (GLuint i = 0; i < 20; i++)
+		for (int i = 0; i < 4; i++)
 		{
-			// Draw the loaded model
-			glm::mat4 model2;
-			model2 = glm::translate(model2, cubePositions[i]); // Translate it down a bit so it's at the center of the scene
-			model2 = glm::scale(model2, glm::vec3(0.1f, 0.1f, 0.1f));	// It's a bit too big for our scene, so scale it down
+			glm::vec3 pos = pointLightPositions[i];
 
-			GLfloat angle2 = glm::radians(1.0f) * (i + 1) * glfwGetTime();
-			model2 = glm::rotate(model, angle2, glm::vec3(1.0f, 0.3f, 0.5f));
+			std::string lightname = "pointLights[" + std::to_string(i) + "]";
 
-			drawAtLocation(&customModelShader, glfwGetTime(), model2);
+			std::string lightPos = lightname + ".position";
 
-			ourModel.Draw(customModelShader);
+			std::string lightAmbient = lightname + ".ambient";
+			std::string lightDiff = lightname + ".diffuse;";
+			std::string lightSpec = lightname + ".specular";
+
+			std::string lightConst = lightname + ".constant";
+			std::string lightLin = lightname + ".linear";
+			std::string lightQuad = lightname + ".quadratic";
+
+			GLint lightDirPos = glGetUniformLocation(customModelShader.Program, lightPos.c_str());
+			glUniform3f(lightDirPos, pos.x, pos.y, pos.z);
+
+			//for positional light
+			glUniform3f(glGetUniformLocation(customModelShader.Program, lightAmbient.c_str()), 0.05f, 0.05f, 0.05f);
+			glUniform3f(glGetUniformLocation(customModelShader.Program, lightname.c_str()), 0.8f, 0.8f, 0.8f);
+			glUniform3f(glGetUniformLocation(customModelShader.Program, lightSpec.c_str()), pointLightColors[i].x, pointLightColors[i].y, pointLightColors[i].z);
+
+			glUniform1f(glGetUniformLocation(customModelShader.Program, lightConst.c_str()), 1.0f);
+			glUniform1f(glGetUniformLocation(customModelShader.Program, lightLin.c_str()), 0.09);
+			glUniform1f(glGetUniformLocation(customModelShader.Program, lightQuad.c_str()), 0.032);
 		}
+
+		// Draw the loaded model
+		glm::mat4 model2;
+		model2 = glm::translate(model2, glm::vec3(0.0f, -1.0f, 0.0f)); // Translate it down a bit so it's at the center of the scene
+		model2 = glm::scale(model2, glm::vec3(0.01f, 0.01f, 0.01f));	// It's a bit too big for our scene, so scale it down
+
+		GLfloat angle2 = glm::radians(10.0f) *  glfwGetTime();
+		model2 = glm::rotate(model2, angle2, glm::vec3(0.0f, 1.0f, 0.0f));
+
+		drawAtLocation(&customModelShader, glfwGetTime(), model2);
+		ourModel.Draw(customModelShader);
+
 
 		lampShader.Use();
 

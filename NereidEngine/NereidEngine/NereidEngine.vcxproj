@@ -202,6 +202,7 @@
     <None Include="Shaders\tex_diff_standard.vert" />
     <None Include="Shaders\vertexshader.vert" />
     <None Include="Shaders\textured_diffuse.vert" />
+    <None Include="Textures\CrewMesh.FBX" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\awesomeface.png" />
